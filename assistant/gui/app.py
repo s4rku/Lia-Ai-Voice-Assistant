@@ -1,4 +1,4 @@
-"""
+﻿"""
 GUI application entry point.
 Runs the PySide6 event loop in a dedicated thread alongside the asyncio loop.
 The two loops communicate via Qt signals / asyncio queues.
@@ -18,7 +18,7 @@ try:
     from PySide6.QtWidgets import QApplication, QSystemTrayIcon, QMenu  # type: ignore
     from PySide6.QtGui import QIcon, QPixmap, QColor, QPainter, QAction  # type: ignore
     from PySide6.QtCore import Qt, QTimer  # type: ignore
-    from assistant.gui.window import SarkuWindow
+    from assistant.gui.window import LiaWindow
     _QT_AVAILABLE = True
 except ImportError:
     _QT_AVAILABLE = False
@@ -55,7 +55,7 @@ def _make_tray_icon(app: QApplication) -> QSystemTrayIcon:
     return tray
 
 
-_window_ref: list[SarkuWindow | None] = [None]
+_window_ref: list[LiaWindow | None] = [None]
 
 
 def run_gui(async_loop: asyncio.AbstractEventLoop) -> None:
@@ -71,7 +71,7 @@ def run_gui(async_loop: asyncio.AbstractEventLoop) -> None:
     app.setApplicationName(settings.assistant_name)
     app.setQuitOnLastWindowClosed(False)
 
-    window = SarkuWindow()
+    window = LiaWindow()
     _window_ref[0] = window
 
     tray = _make_tray_icon(app)

@@ -1,4 +1,4 @@
-"""
+﻿"""
 Unit tests for the MemoryStore (SQLite layer only – no ChromaDB/embedder).
 """
 import pytest
@@ -61,7 +61,7 @@ async def test_save_and_get_facts(mem):
 async def test_save_message_without_embedder(mem):
     await mem.new_session()
     # Should not raise even without ChromaDB
-    await mem.save_message("user", "Hello Sarku!")
+    await mem.save_message("user", "Hello Lia!")
     await mem.save_message("assistant", "Hey there!")
 
 

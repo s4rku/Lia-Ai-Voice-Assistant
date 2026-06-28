@@ -1,9 +1,9 @@
-@echo off
+﻿@echo off
 setlocal enabledelayedexpansion
 
 echo.
 echo  ============================================
-echo   Sarku – Build Standalone Executable
+echo   lia – Build Standalone Executable
 echo  ============================================
 echo.
 
@@ -28,10 +28,10 @@ if exist "..\build" rmdir /s /q "..\build"
 echo [*] Building executable...
 cd ..
 pyinstaller ^
-    --name "Sarku" ^
+    --name "Lia" ^
     --onefile ^
     --windowed ^
-    --icon "installer\sarku.ico" ^
+    --icon "installer\lia.ico" ^
     --add-data "assistant\config;assistant\config" ^
     --add-data ".env.example;." ^
     --hidden-import "assistant.ai.brain" ^
@@ -53,6 +53,6 @@ if %errorlevel% neq 0 (
 )
 
 echo.
-echo  Build complete! Executable: dist\Sarku.exe
+echo  Build complete! Executable: dist\lia.exe
 echo.
 pause

@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     )
 
     # ── Identity ─────────────────────────────────────────────────────────────
-    assistant_name: str = Field(default="lia")
+    assistant_name: str = Field(default="Lia")
     user_name: str = Field(default="Boss")
 
     # ── Wake word ─────────────────────────────────────────────────────────────

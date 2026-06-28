@@ -1,5 +1,5 @@
-"""
-Sarku – Main entry point.
+﻿"""
+lia – Main entry point.
 Bootstraps all services in dependency order, then runs the conversation loop.
 GUI runs on the main thread; asyncio runs inside the same thread via Qt pump.
 """
@@ -23,7 +23,7 @@ from assistant.system.health import start_health_monitor
 
 async def _shutdown(loop: asyncio.AbstractEventLoop) -> None:
     """Graceful shutdown – notify every module, cancel tasks, close DB."""
-    logger.info("Sarku is shutting down…")
+    logger.info("Lia is shutting down…")
     await bus.publish(Event(type=EventType.SHUTDOWN, source="main"))
 
     try:
@@ -104,7 +104,7 @@ async def _startup() -> None:
     bus.subscribe(EventType.CONFIRMATION_REQUIRED, _on_confirm)
 
     logger.info(
-        "✅ Sarku v0.3.0 ready — say '{}' to wake me up, {}!",
+        "✅ Lia v0.3.0 ready — say '{}' to wake me up, {}!",
         settings.wake_words[0],
         settings.user_name,
     )
@@ -135,9 +135,9 @@ async def _run() -> None:
 
 
 def main() -> NoReturn:
-    """CLI entry point – registered in pyproject.toml as `sarku`."""
+    """CLI entry point – registered in pyproject.toml as `lia`."""
     setup_logging()
-    logger.info("Starting Sarku…")
+    logger.info("Starting Lia…")
 
     # ── Decide whether to run with GUI ────────────────────────────────────────
     try:

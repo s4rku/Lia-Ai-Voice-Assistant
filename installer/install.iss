@@ -1,38 +1,38 @@
-; Inno Setup script for Sarku AI Voice Assistant
-; Compile with Inno Setup 6+ to produce SarkuSetup.exe
+﻿; Inno Setup script for Lia AI Voice Assistant
+; Compile with Inno Setup 6+ to produce LiaSetup.exe
 
 [Setup]
-AppName=Sarku AI Voice Assistant
+AppName=Lia AI Voice Assistant
 AppVersion=1.0.0
-AppPublisher=Sarku Project
-DefaultDirName={autopf}\Sarku
-DefaultGroupName=Sarku
-OutputBaseFilename=SarkuSetup
+AppPublisher=Lia Project
+DefaultDirName={autopf}\Lia
+DefaultGroupName=Lia
+OutputBaseFilename=LiaSetup
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
 PrivilegesRequired=lowest
 
 [Files]
-Source: "..\dist\Sarku.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\lia.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\\.env.example";   DestDir: "{app}"; DestName: ".env.example"; Flags: ignoreversion
 Source: "..\README.md";       DestDir: "{app}"; Flags: ignoreversion isreadme
 
 [Icons]
-Name: "{group}\Sarku";        Filename: "{app}\Sarku.exe"
+Name: "{group}\lia";        Filename: "{app}\lia.exe"
 Name: "{group}\Uninstall";    Filename: "{uninstallexe}"
-Name: "{commondesktop}\Sarku"; Filename: "{app}\Sarku.exe"; Tasks: desktopicon
+Name: "{commondesktop}\lia"; Filename: "{app}\lia.exe"; Tasks: desktopicon
 
 [Tasks]
 Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription: "Additional icons:"
 
 [Run]
-Filename: "{app}\Sarku.exe"; Description: "Launch Sarku"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\lia.exe"; Description: "Launch lia"; Flags: nowait postinstall skipifsilent
 
 [Code]
 procedure InitializeWizard;
 begin
   WizardForm.WelcomeLabel2.Caption :=
-    'Sarku is a Jarvis-like AI Voice Assistant for Windows.' + #13#10 +
+    'Lia is a Jarvis-like AI Voice Assistant for Windows.' + #13#10 +
     'After installation, edit {app}\.env and add your OPENAI_API_KEY.';
 end;

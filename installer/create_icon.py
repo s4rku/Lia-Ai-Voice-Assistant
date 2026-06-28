@@ -1,5 +1,5 @@
-"""
-Creates a simple sarku.ico using Pillow.
+﻿"""
+Creates a simple lia.ico using Pillow.
 Run once: python installer/create_icon.py
 """
 from pathlib import Path
@@ -19,7 +19,7 @@ try:
         font = ImageFont.load_default()
     draw.text((128, 128), "S", font=font, fill=(233, 69, 96, 255), anchor="mm")
 
-    out = Path(__file__).parent / "sarku.ico"
+    out = Path(__file__).parent / "lia.ico"
     img.save(str(out), format="ICO", sizes=[(16,16),(32,32),(48,48),(64,64),(128,128),(256,256)])
     print(f"Icon saved: {out}")
 except ImportError:

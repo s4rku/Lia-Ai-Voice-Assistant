@@ -1,4 +1,4 @@
-"""
+﻿"""
 Main application window.
 A compact floating panel with:
   • Animated orb
@@ -61,7 +61,7 @@ LIGHT = {
 
 
 if _QT_AVAILABLE:
-    class SarkuWindow(QMainWindow):
+    class LiaWindow(QMainWindow):
         # Thread-safe signals for updating UI from async callbacks
         _sig_state   = Signal(str)
         _sig_message = Signal(str, str)   # role, text
@@ -137,7 +137,7 @@ if _QT_AVAILABLE:
             root.addLayout(orb_row)
 
             # State label
-            self._lbl_state = QLabel("Idle — say hey sarku")
+            self._lbl_state = QLabel("Idle — say hey lia")
             self._lbl_state.setAlignment(Qt.AlignCenter)
             self._lbl_state.setStyleSheet(f"color:{self._theme['dim']};font-size:11px;")
             root.addWidget(self._lbl_state)
@@ -277,7 +277,7 @@ if _QT_AVAILABLE:
                 self._drag_pos = event.globalPosition().toPoint()
 
 else:
-    class SarkuWindow:  # type: ignore[no-redef]
+    class LiaWindow:  # type: ignore[no-redef]
         def __init__(self): pass
         def show(self): pass
         def hide(self): pass

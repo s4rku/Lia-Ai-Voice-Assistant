@@ -1,4 +1,4 @@
-"""
+﻿"""
 Memory store – two layers:
 
 Short-term : rolling deque in RAM (already in ConversationLoop)
@@ -47,7 +47,7 @@ except ImportError:
 
 class MemoryStore:
     """
-    Manages all persistent memory for Sarku.
+    Manages all persistent memory for lia.
 
     • save_message()         – persist a chat message to SQLite
     • recall_similar()       – semantic search in ChromaDB
@@ -80,7 +80,7 @@ class MemoryStore:
         settings.memory_chroma_path.mkdir(parents=True, exist_ok=True)
         self._chroma_client = chromadb.PersistentClient(path=path)
         self._collection = self._chroma_client.get_or_create_collection(
-            name="sarku_memory",
+            name="lia_memory",
             metadata={"hnsw:space": "cosine"},
         )
         logger.info("ChromaDB collection ready at {}", path)

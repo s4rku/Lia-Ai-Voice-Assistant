@@ -7,7 +7,7 @@ from assistant.config.settings import Settings
 
 def test_default_assistant_name():
     s = Settings()
-    assert s.assistant_name == "lia"
+    assert s.assistant_name == "Lia"
 
 
 def test_default_wake_words():

@@ -1,5 +1,5 @@
-"""
-Animated orb widget – the visual centrepiece of Sarku's GUI.
+﻿"""
+Animated orb widget – the visual centrepiece of Lia's GUI.
 States: idle (slow pulse) → listening (fast blue pulse) →
         thinking (spinning gradient) → speaking (wave ripple)
 """
