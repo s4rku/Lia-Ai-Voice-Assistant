@@ -1,12 +1,14 @@
 """
-lia – Main entry point.
+Sarku – Main entry point.
 Bootstraps all services in dependency order, then runs the conversation loop.
+GUI runs on the main thread; asyncio runs inside the same thread via Qt pump.
 """
 from __future__ import annotations
 
 import asyncio
 import signal
 import sys
+import threading
 from typing import NoReturn
 
 from loguru import logger
@@ -21,32 +23,29 @@ from assistant.system.health import start_health_monitor
 
 async def _shutdown(loop: asyncio.AbstractEventLoop) -> None:
     """Graceful shutdown – notify every module, cancel tasks, close DB."""
-    logger.info("lia is shutting down…")
-
-    # Signal all modules to clean up
+    logger.info("Sarku is shutting down…")
     await bus.publish(Event(type=EventType.SHUTDOWN, source="main"))
 
-    # Stop audio pipeline
     try:
         from assistant.ai.conversation import conversation
         from assistant.tts.speaker import speaker
         from assistant.stt.transcriber import transcriber
-        from assistant.audio.vad import vad  # noqa: F401  (just imported for awareness)
         from assistant.wakeword.detector import wake_detector
         from assistant.audio.microphone import microphone
+        from assistant.memory.store import memory
 
         await conversation.stop()
         await speaker.stop()
         await transcriber.stop()
         await wake_detector.stop()
         await microphone.stop()
+        await memory.close_session(summary="Session ended.")
     except Exception:
-        logger.exception("Error during audio pipeline shutdown.")
+        logger.exception("Error during pipeline shutdown.")
 
     await plugin_manager.teardown_all()
     await db.close()
 
-    # Cancel lingering tasks
     tasks = [t for t in asyncio.all_tasks(loop) if t is not asyncio.current_task()]
     for task in tasks:
         task.cancel()
@@ -57,16 +56,21 @@ async def _shutdown(loop: asyncio.AbstractEventLoop) -> None:
 async def _startup() -> None:
     """Initialise every subsystem in dependency order."""
 
-    # ── 1. Database ───────────────────────────────────────────────────────────
+    # 1. Database
     await db.init()
 
-    # ── 2. System health monitor ──────────────────────────────────────────────
+    # 2. System health monitor
     await start_health_monitor()
 
-    # ── 3. Plugins ────────────────────────────────────────────────────────────
+    # 3. Plugins
     await plugin_manager.setup_all()
 
-    # ── 4. Audio pipeline ─────────────────────────────────────────────────────
+    # 4. Memory store
+    from assistant.memory.store import memory
+    await memory.init()
+    await memory.new_session()
+
+    # 5. Audio pipeline
     from assistant.audio.microphone import microphone
     from assistant.audio.vad import vad
     from assistant.wakeword.detector import wake_detector
@@ -74,34 +78,33 @@ async def _startup() -> None:
     from assistant.tts.speaker import speaker
     from assistant.ai.conversation import conversation
 
-    # Load VAD model (downloads ~2 MB silero model on first run)
     await vad.load()
-
-    # Load wake word detector
     await wake_detector.load()
-
-    # Start TTS speaker
     await speaker.start()
-
-    # Start STT transcriber (pre-warms Whisper model in background)
     await transcriber.start()
 
-    # ── 5. Wire VAD into the microphone stream ────────────────────────────────
+    # 6. VAD pump (feeds mic → VAD)
     async def _vad_pump() -> None:
-        """Background task: feeds mic frames into VAD."""
         async for frame in microphone.stream():
             await vad.process_frame(frame)
 
     asyncio.create_task(_vad_pump(), name="vad_pump")
 
-    # ── 6. Start wake word detector (needs mic running) ───────────────────────
+    # 7. Wake detector + conversation loop
     await wake_detector.start()
-
-    # ── 7. Start conversation loop ────────────────────────────────────────────
     await conversation.start()
 
+    # 8. Confirmation handler (dangerous actions)
+    async def _on_confirm(event: Event) -> None:
+        info = event.data or {}
+        intent = info.get("intent", "action")
+        from assistant.tts.speaker import speaker as sp
+        await sp.say(f"Are you sure you want to {intent.replace('_', ' ')}? Say yes or no.")
+
+    bus.subscribe(EventType.CONFIRMATION_REQUIRED, _on_confirm)
+
     logger.info(
-        "✅ lia v0.2.0 ready — say '{}' to wake me up, {}!",
+        "✅ Sarku v0.3.0 ready — say '{}' to wake me up, {}!",
         settings.wake_words[0],
         settings.user_name,
     )
@@ -121,7 +124,6 @@ async def _run() -> None:
         try:
             loop.add_signal_handler(sig, _signal_handler)
         except (NotImplementedError, ValueError):
-            # Windows CMD doesn't support all signals via add_signal_handler
             pass
 
     try:
@@ -133,14 +135,59 @@ async def _run() -> None:
 
 
 def main() -> NoReturn:
-    """CLI entry point – registered in pyproject.toml as `lia`."""
+    """CLI entry point – registered in pyproject.toml as `sarku`."""
     setup_logging()
-    logger.info("Starting lia…")
+    logger.info("Starting Sarku…")
+
+    # ── Decide whether to run with GUI ────────────────────────────────────────
+    try:
+        from PySide6.QtWidgets import QApplication  # type: ignore
+        _qt_available = True
+    except ImportError:
+        _qt_available = False
+
+    if _qt_available:
+        _run_with_gui()
+    else:
+        logger.info("PySide6 not found – running headless.")
+        _run_headless()
+
+    sys.exit(0)
+
+
+def _run_headless() -> None:
+    """Run purely in asyncio – no GUI."""
     try:
         asyncio.run(_run())
     except KeyboardInterrupt:
         logger.info("Interrupted by user.")
-    sys.exit(0)
+
+
+def _run_with_gui() -> None:
+    """
+    Run asyncio loop and Qt event loop together on the main thread.
+    Qt's timer pumps asyncio every 15 ms.
+    """
+    import asyncio
+    from assistant.gui.app import run_gui
+
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+    # Start asyncio startup in background before Qt takes over
+    async def _boot():
+        await _startup()
+
+    loop.run_until_complete(_boot())
+
+    # Qt takes the main thread; it pumps asyncio via a QTimer inside run_gui
+    try:
+        run_gui(loop)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        loop.run_until_complete(_shutdown(loop))
+        loop.close()
 
 
 if __name__ == "__main__":

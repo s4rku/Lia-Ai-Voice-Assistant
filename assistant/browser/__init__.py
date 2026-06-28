@@ -1,1 +1,3 @@
-# Phase 5: Browser automation (Playwright)
+from .controller import BrowserController, browser
+
+__all__ = ["BrowserController", "browser"]
