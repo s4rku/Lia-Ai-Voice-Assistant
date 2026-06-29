@@ -31,7 +31,7 @@ try:
     )
     from assistant.gui.orb import OrbWidget
     _QT_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError, Exception):
     _QT_AVAILABLE = False
     logger.warning("PySide6 not installed – GUI disabled.")
 
@@ -210,7 +210,7 @@ if _QT_AVAILABLE:
         def _on_state_changed(self, state: str) -> None:
             self._orb.set_state(state)
             labels = {
-                "idle":      f"Idle — say '{settings.wake_words[0]}'",
+                "idle":      f"Idle — say '{settings.wake_word_list[0]}'",
                 "listening": "Listening…",
                 "thinking":  "Thinking…",
                 "speaking":  "Speaking…",
@@ -223,8 +223,9 @@ if _QT_AVAILABLE:
             if not text.strip():
                 return
             t = self._theme
+            accent = t["accent"]
             if role == "user":
-                prefix = f"<b style='color:{t[\"accent\"]}'>{settings.user_name}:</b> "
+                prefix = f"<b style='color:{accent}'>{settings.user_name}:</b> "
             else:
                 prefix = f"<b style='color:#7ec8e3'>{settings.assistant_name}:</b> "
             self._chat_area.append(prefix + text.replace("\n", "<br>"))

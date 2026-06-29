@@ -1,7 +1,7 @@
 from .microphone import MicrophoneStream, AudioFrame, microphone
-from .vad import SileroVAD, Utterance, VADState, vad
+from .vad import VAD, EnergyVAD, SileroVAD, Utterance, VADState, vad
 
 __all__ = [
     "MicrophoneStream", "AudioFrame", "microphone",
-    "SileroVAD", "Utterance", "VADState", "vad",
+    "VAD", "EnergyVAD", "SileroVAD", "Utterance", "VADState", "vad",
 ]

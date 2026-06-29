@@ -12,7 +12,7 @@ from loguru import logger
 try:
     import screen_brightness_control as sbc  # type: ignore
     _SBC_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError, Exception):
     sbc = None  # type: ignore
     _SBC_AVAILABLE = False
 

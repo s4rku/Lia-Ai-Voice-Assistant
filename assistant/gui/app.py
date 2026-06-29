@@ -20,7 +20,7 @@ try:
     from PySide6.QtCore import Qt, QTimer  # type: ignore
     from assistant.gui.window import LiaWindow
     _QT_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError, Exception):
     _QT_AVAILABLE = False
     logger.warning("PySide6 not installed – running headless.")
 

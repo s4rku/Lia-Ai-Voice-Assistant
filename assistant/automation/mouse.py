@@ -14,14 +14,14 @@ from assistant.config import settings
 try:
     import pyautogui  # type: ignore
     _PAG_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError, Exception):
     pyautogui = None  # type: ignore
     _PAG_AVAILABLE = False
 
 try:
     from PIL import Image  # type: ignore
     _PIL_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError, Exception):
     Image = None  # type: ignore
     _PIL_AVAILABLE = False
 

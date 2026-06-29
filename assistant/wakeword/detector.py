@@ -29,7 +29,7 @@ from assistant.core.events import Event, EventType, bus
 try:
     from openwakeword.model import Model as OWWModel  # type: ignore
     _OWW_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError, Exception):
     _OWWModel = None  # type: ignore
     _OWW_AVAILABLE = False
     logger.warning("openwakeword not installed – falling back to transcript-based wake word.")
@@ -53,7 +53,7 @@ class WakeWordDetector:
 
     def __init__(self) -> None:
         self._oww: OWWModel | None = None  # type: ignore[name-defined]
-        self._wake_words = [w.lower().strip() for w in settings.wake_words]
+        self._wake_words = [w.lower().strip() for w in settings.wake_word_list]
         self._running = False
         self._task: asyncio.Task | None = None
         self._residual = np.array([], dtype=np.float32)

@@ -12,21 +12,21 @@ from loguru import logger
 try:
     import pygetwindow as gw  # type: ignore
     _GW_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError, Exception):
     gw = None  # type: ignore
     _GW_AVAILABLE = False
 
 try:
     import psutil  # type: ignore
     _PSUTIL_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError, Exception):
     psutil = None  # type: ignore
     _PSUTIL_AVAILABLE = False
 
 try:
     import pyautogui  # type: ignore
     _PAG_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError, Exception):
     pyautogui = None  # type: ignore
     _PAG_AVAILABLE = False
 

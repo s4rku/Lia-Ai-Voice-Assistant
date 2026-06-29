@@ -17,7 +17,7 @@ from assistant.config import settings
 try:
     import pyautogui  # type: ignore
     _PAG_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError, Exception):
     pyautogui = None  # type: ignore
     _PAG_AVAILABLE = False
 
@@ -26,7 +26,7 @@ try:
     import pytesseract  # type: ignore
     pytesseract.pytesseract.tesseract_cmd = settings.tesseract_path
     _OCR_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError, Exception):
     Image = None  # type: ignore
     pytesseract = None  # type: ignore
     _OCR_AVAILABLE = False
@@ -34,14 +34,14 @@ except ImportError:
 try:
     import cv2  # type: ignore
     _CV2_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError, Exception):
     cv2 = None  # type: ignore
     _CV2_AVAILABLE = False
 
 try:
     from openai import AsyncOpenAI  # type: ignore
     _OPENAI_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError, Exception):
     AsyncOpenAI = None  # type: ignore
     _OPENAI_AVAILABLE = False
 

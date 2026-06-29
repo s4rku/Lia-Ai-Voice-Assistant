@@ -19,7 +19,7 @@ try:
     )
     from PySide6.QtWidgets import QWidget
     _QT_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError, Exception):
     _QT_AVAILABLE = False
 
 

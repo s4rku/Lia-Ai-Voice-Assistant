@@ -12,7 +12,7 @@ try:
     import pyautogui  # type: ignore
     import pyperclip  # type: ignore  (installed with pyautogui)
     _PAG_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError, Exception):
     pyautogui = None  # type: ignore
     pyperclip = None  # type: ignore
     _PAG_AVAILABLE = False
@@ -21,7 +21,7 @@ try:
     from pynput.keyboard import Controller as KbController, Key  # type: ignore
     _PYNPUT_AVAILABLE = True
     _kb = KbController()
-except ImportError:
+except (ImportError, OSError, Exception):
     KbController = None  # type: ignore
     Key = None  # type: ignore
     _PYNPUT_AVAILABLE = False

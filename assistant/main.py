@@ -56,7 +56,8 @@ async def _shutdown(loop: asyncio.AbstractEventLoop) -> None:
 async def _startup() -> None:
     """Initialise every subsystem in dependency order."""
 
-    # 1. Database
+    # 1. Database – import models first so Base.metadata has all tables registered
+    import assistant.database.models  # noqa: F401
     await db.init()
 
     # 2. System health monitor
@@ -105,7 +106,7 @@ async def _startup() -> None:
 
     logger.info(
         "✅ Lia v0.3.0 ready — say '{}' to wake me up, {}!",
-        settings.wake_words[0],
+        settings.wake_word_list[0],
         settings.user_name,
     )
     await bus.publish(Event(type=EventType.ASSISTANT_IDLE, source="main"))
@@ -143,7 +144,7 @@ def main() -> NoReturn:
     try:
         from PySide6.QtWidgets import QApplication  # type: ignore
         _qt_available = True
-    except ImportError:
+    except (ImportError, OSError, Exception):
         _qt_available = False
 
     if _qt_available:
@@ -169,7 +170,12 @@ def _run_with_gui() -> None:
     Qt's timer pumps asyncio every 15 ms.
     """
     import asyncio
-    from assistant.gui.app import run_gui
+    try:
+        from assistant.gui.app import run_gui
+    except (ImportError, OSError, SyntaxError, Exception) as exc:
+        logger.warning("GUI unavailable ({}), falling back to headless.", exc)
+        _run_headless()
+        return
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)

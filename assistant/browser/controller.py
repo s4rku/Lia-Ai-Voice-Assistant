@@ -15,7 +15,7 @@ try:
         async_playwright, Browser, BrowserContext, Page, Playwright,
     )
     _PW_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError, Exception):
     _PW_AVAILABLE = False
     logger.warning("playwright not installed – browser automation disabled.")
 

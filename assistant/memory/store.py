@@ -30,17 +30,17 @@ try:
     import chromadb  # type: ignore
     from chromadb.config import Settings as ChromaSettings  # type: ignore
     _CHROMA_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError, Exception):
     chromadb = None  # type: ignore
     ChromaSettings = None  # type: ignore
     _CHROMA_AVAILABLE = False
     logger.warning("chromadb not installed – long-term semantic memory disabled.")
 
-# sentence-transformers is optional
+# sentence-transformers chains to torch – guard against App Control / DLL blocks
 try:
     from sentence_transformers import SentenceTransformer  # type: ignore
     _ST_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError, Exception):
     SentenceTransformer = None  # type: ignore
     _ST_AVAILABLE = False
 

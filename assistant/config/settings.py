@@ -31,14 +31,12 @@ class Settings(BaseSettings):
     user_name: str = Field(default="Boss")
 
     # ── Wake word ─────────────────────────────────────────────────────────────
-    wake_words: list[str] = Field(default=["hey lia", "lia", "hello lia"])
+    # Stored as a plain comma-string in .env – parsed by the validator below.
+    wake_words: str = Field(default="hey lia,lia,hello lia")
 
-    @field_validator("wake_words", mode="before")
-    @classmethod
-    def parse_wake_words(cls, v: object) -> list[str]:
-        if isinstance(v, str):
-            return [w.strip().lower() for w in v.split(",") if w.strip()]
-        return v  # type: ignore[return-value]
+    @property
+    def wake_word_list(self) -> list[str]:
+        return [w.strip().lower() for w in self.wake_words.split(",") if w.strip()]
 
     # ── OpenAI ────────────────────────────────────────────────────────────────
     openai_api_key: str = Field(default="")
@@ -55,6 +53,9 @@ class Settings(BaseSettings):
     stt_silence_ms: int = Field(default=700)   # ms of silence → end of utterance
     stt_sample_rate: int = Field(default=16_000)
     stt_chunk_ms: int = Field(default=30)       # chunk size fed to VAD
+    vad_energy_threshold: float = Field(default=0.015)  # RMS floor for energy VAD
+    vad_speech_ratio: float = Field(default=3.5)        # speech = N× above noise floor
+    microphone_device: int | None = Field(default=None) # None = OS default
 
     # ── TTS ──────────────────────────────────────────────────────────────────
     tts_voice: str = Field(default="en-US-GuyNeural")

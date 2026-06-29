@@ -179,7 +179,7 @@ class ConversationLoop:
     def _strip_wake_prefix(self, text: str) -> str:
         """Remove leading wake phrase from transcript."""
         lower = text.lower()
-        for phrase in sorted(settings.wake_words, key=len, reverse=True):
+        for phrase in sorted(settings.wake_word_list, key=len, reverse=True):
             if lower.startswith(phrase):
                 return text[len(phrase):].strip(" ,!?.")
         return text

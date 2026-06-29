@@ -27,7 +27,7 @@ from assistant.core.events import Event, EventType, bus
 try:
     import edge_tts  # type: ignore
     _EDGE_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError, Exception):
     edge_tts = None  # type: ignore
     _EDGE_AVAILABLE = False
     logger.warning("edge-tts not installed – TTS will be silent.")
@@ -35,7 +35,7 @@ except ImportError:
 try:
     import pygame  # type: ignore
     _PYGAME_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError, Exception):
     pygame = None  # type: ignore
     _PYGAME_AVAILABLE = False
     logger.warning("pygame not installed – audio playback disabled.")
