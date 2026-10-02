@@ -1,56 +1,47 @@
-﻿# Lia — AI Voice Assistant for Windows
+﻿# Lia - AI Voice Assistant
 
-> A Jarvis-like desktop AI companion. Listens continuously, understands natural language,
-> speaks with a realistic voice, and controls your entire Windows PC.
+A personal voice assistant I built for Windows. Kind of like Jarvis but obviously way less cool lol. You can talk to it, it talks back, and it can control your PC — open apps, manage files, browse the web, that sort of thing.
 
----
-
-## What Lia Can Do
-
-| Category | Capabilities |
-|---|---|
-| **Conversation** | Natural fluid dialogue, short-term + long-term memory, context awareness, follow-up questions |
-| **Wake Word** | Offline detection — say *"Hey Lia"*, *"Lia"*, or *"Hello Lia"* |
-| **Voice** | Microsoft Edge neural TTS, interruptible mid-sentence, streaming playback |
-| **Speech Recognition** | faster-whisper (Whisper model), Silero VAD, continuous listening |
-| **Apps** | Open, close, kill, switch, minimize, maximize any Windows application |
-| **System** | Volume, brightness, shutdown, restart, sleep, lock, CMD, PowerShell |
-| **Files** | Create, delete, move, copy, rename, zip, extract, search, read PDFs/Word/Excel |
-| **Browser** | Chrome/Edge/Firefox — open URLs, Google search, tabs, YouTube, Gmail, Discord |
-| **Vision** | Screenshot, OCR, find & click text on screen, GPT-4o screen description |
-| **AI Brain** | OpenAI GPT-4o-mini, streaming responses, context-aware, fact extraction |
-| **Memory** | SQLite (sessions, history, facts, preferences) + ChromaDB (semantic recall) |
-| **GUI** | Floating animated orb, conversation history, system stats, dark/light theme, tray icon |
-| **Safety** | Confirmation required for dangerous actions (delete, shutdown, PowerShell, etc.) |
-| **Plugins** | Extensible architecture — add any capability as a plugin |
+I started this project because I wanted something that actually runs locally (mostly) and doesn't require me to click through a bunch of menus. Still a work in progress but it's usable.
 
 ---
 
-## Prerequisites
+## What it can do
 
-| Requirement | Notes |
-|---|---|
-| **Windows 10 / 11** | Required |
-| **Python 3.10+** | 3.12 recommended — [Download](https://python.org) |
-| **OpenAI API Key** | [Get one here](https://platform.openai.com/api-keys) — Lia works in stub mode without it |
-| **Tesseract OCR** | For screen reading — [Download](https://github.com/UB-Mannheim/tesseract/wiki) |
-| **FFmpeg** | For audio processing — [Download](https://ffmpeg.org/download.html) |
-| **Microphone** | Any microphone works |
-| **CUDA GPU** | Optional — makes speech recognition 5–10× faster |
+- **Wake word** — say "Hey Lia", "Lia", or "Hello Lia" to activate it
+- **Talk to it** — it remembers context within a conversation and even across sessions
+- **Open/close apps** — "open Spotify", "close Chrome", etc.
+- **System controls** — volume, brightness, shutdown, sleep, lock screen
+- **File stuff** — create, delete, move, copy files, read PDFs/Word/Excel
+- **Browser** — open URLs, Google search, YouTube, Gmail, Discord
+- **Screenshot + OCR** — it can see your screen and tell you what's on it
+- **Floating GUI** — little animated orb that sits on your desktop, shows conversation history
 
 ---
 
-## Installation
+## Requirements
 
-### One-command setup
+- Windows 10 or 11
+- Python 3.10+ (I use 3.12)
+- OpenAI API key — it works without one in stub mode but obviously smarter with it
+- [Tesseract OCR](https://github.com/UB-Mannheim/tesseract/wiki) if you want screen reading
+- [FFmpeg](https://ffmpeg.org/download.html) for audio
+- A microphone (anything works)
+- CUDA GPU is optional but makes speech recognition a lot faster
+
+---
+
+## Setup
+
+Easiest way:
 
 ```bat
 setup.bat
 ```
 
-This creates a virtual environment, installs all dependencies, and copies `.env.example` → `.env`.
+That handles the venv, installs dependencies, and copies `.env.example` to `.env`. Then just open `.env` and drop in your OpenAI key.
 
-### Manual setup
+Manual if you prefer:
 
 ```bat
 python -m venv .venv
@@ -59,93 +50,68 @@ pip install -r requirements.txt
 copy .env.example .env
 ```
 
-Then open `.env` and add your API key:
-
-```env
-OPENAI_API_KEY=sk-...
-```
-
 ---
 
-## Running Lia
+## Running it
 
 ```bat
 .venv\Scripts\activate
 python -m assistant.main
 ```
 
-A floating window appears with the animated orb. Say one of the wake words:
-
-- **"Hey Lia"**
-- **"Lia"**
-- **"Hello Lia"**
-
-To stop listening: say *"Goodbye"*, *"Sleep"*, or *"That's all"*.
+The floating orb should show up. Say "Hey Lia" to start talking. Say "Goodbye" or "Sleep" when you're done.
 
 ---
 
-## Configuration
+## Config
 
-All settings live in `.env`. No code changes needed.
+Everything is in `.env`, no need to touch the code:
 
 ```env
-# ── Identity ──────────────────────────────────────────────────────────────────
 ASSISTANT_NAME=Lia
 USER_NAME=Boss
 
-# ── Wake words (comma-separated) ──────────────────────────────────────────────
 WAKE_WORDS=hey lia,lia,hello lia
 
-# ── AI ────────────────────────────────────────────────────────────────────────
 OPENAI_API_KEY=sk-...
 OPENAI_MODEL=gpt-4o-mini
 
-# ── Speech Recognition ────────────────────────────────────────────────────────
-STT_MODEL=base.en        # tiny.en | base.en | small.en | medium.en | large-v3
-STT_DEVICE=cpu           # cpu | cuda
+# tiny.en is faster, large-v3 is more accurate
+STT_MODEL=base.en
+STT_DEVICE=cpu   # or cuda
 
-# ── Voice ─────────────────────────────────────────────────────────────────────
 TTS_VOICE=en-US-GuyNeural
 TTS_RATE=+10%
 
-# ── Vision ────────────────────────────────────────────────────────────────────
 TESSERACT_PATH=C:\Program Files\Tesseract-OCR\tesseract.exe
 
-# ── GUI ───────────────────────────────────────────────────────────────────────
-GUI_THEME=dark           # dark | light
+GUI_THEME=dark
 GUI_ALWAYS_ON_TOP=true
 GUI_START_MINIMIZED=false
 
-# ── Weather (optional) ────────────────────────────────────────────────────────
+# optional
 WEATHER_API_KEY=
 WEATHER_CITY=London
 ```
 
 ---
 
-## Example Conversations
+## Some example interactions
 
 ```
 You:  "Hey Lia"
 Lia:  "Yes?"
-You:  "Open Spotify and set the volume to 60%"
-Lia:  "Done — Spotify is launching and I've set the volume to 60%."
+You:  "Open Spotify and set volume to 60"
+Lia:  "Done."
 
-You:  "Lia, search YouTube for lofi hip hop"
+You:  "Search YouTube for lofi hip hop"
 Lia:  "Opening that now."
 
-You:  "My PC is running slow"
-Lia:  "Your CPU is at 91% — Chrome is the main culprit.
-       Want me to close it?"
+You:  "What's on my screen?"
+Lia:  "Looks like VS Code with a Python file open..."
 
-You:  "What's on my screen right now?"
-Lia:  "I can see VS Code open with a Python file called main.py..."
-
-You:  "I need to send a message to John on Discord"
-Lia:  "Opening Discord Web now. What would you like to say to John?"
-
-You:  "Shutdown the PC"
-Lia:  "Are you sure you want to shutdown? Say yes or no."
+You:  "Shutdown"
+Lia:  "Are you sure? Say yes or no."
 You:  "Yes"
 Lia:  "Shutting down."
 
@@ -155,250 +121,73 @@ Lia:  "Going quiet. Say my name when you need me."
 
 ---
 
-## Project Structure
+## Project layout
 
 ```
-Lia AI Voice Assistant/
-├── assistant/
-│   ├── main.py               Entry point — boots everything, bridges Qt ↔ asyncio
-│   ├── config/
-│   │   ├── settings.py       All config via pydantic-settings + .env
-│   │   └── logging_setup.py  Loguru — colourised console + rotating log file
-│   ├── core/
-│   │   ├── events.py         Async pub/sub event bus (all modules talk through this)
-│   │   └── types.py          Shared types: Message, Role, AssistantState
-│   ├── database/
-│   │   ├── db.py             Async SQLAlchemy + aiosqlite, WAL mode
-│   │   └── models.py         ConversationSession, ChatMessage, UserPreference,
-│   │                         CommandHistory, KnowledgeFact
-│   ├── system/
-│   │   └── health.py         Background CPU/RAM/disk/battery/network monitor
-│   ├── plugins/
-│   │   └── base.py           Plugin ABC + PluginManager (register/dispatch)
-│   ├── audio/
-│   │   ├── microphone.py     sounddevice async stream → AudioFrame queue
-│   │   └── vad.py            Silero VAD state machine → Utterance events
-│   ├── stt/
-│   │   └── transcriber.py    faster-whisper, lazy load, thread pool
-│   ├── tts/
-│   │   └── speaker.py        edge-tts streaming, sentence splitting, interrupt-on-speech
-│   ├── wakeword/
-│   │   └── detector.py       OpenWakeWord (primary) + regex transcript fallback
-│   ├── ai/
-│   │   ├── brain.py          OpenAI streaming, system prompt, action extraction,
-│   │   │                     auto fact extraction, stub mode
-│   │   └── conversation.py   State machine: IDLE→LISTEN→THINK→SPEAK→LISTEN
-│   ├── memory/
-│   │   └── store.py          SQLite (sessions/facts/prefs) + ChromaDB semantic recall
-│   ├── automation/
-│   │   ├── dispatcher.py     Intent router with dangerous-action confirmation gate
-│   │   ├── apps.py           Open/close/kill/switch/minimize/maximize apps
-│   │   ├── keyboard.py       Type text, press keys, hotkeys, clipboard
-│   │   ├── mouse.py          Click, drag, scroll, screenshot
-│   │   ├── system_ctrl.py    Volume, brightness, power controls, CMD, PowerShell
-│   │   └── file_ops.py       Create/delete/move/copy/zip/extract, read PDFs/Word/Excel
-│   ├── browser/
-│   │   └── controller.py     Playwright async — Chrome/Edge/Firefox,
-│   │                         tabs, forms, YouTube, Gmail, Discord
-│   ├── vision/
-│   │   └── screen.py         Tesseract OCR, find-and-click text on screen, GPT-4o vision
-│   └── gui/
-│       ├── orb.py            PySide6 animated orb (pulse / spin / wave per state)
-│       ├── window.py         Frameless floating window, chat history, stats bar
-│       └── app.py            Qt ↔ asyncio co-runner via QTimer pump
-├── tests/
-│   └── unit/                 55 tests — all phases covered, all passing
-├── installer/
-│   ├── build.bat             PyInstaller one-file .exe build
-│   ├── install.iss           Inno Setup installer script
-│   └── create_icon.py        Generates lia.ico with Pillow
-├── data/
-│   ├── memory/               SQLite DB + ChromaDB (auto-created at runtime)
-│   ├── models/               Wake word ONNX models (auto-downloaded)
-│   └── screenshots/          Saved screenshots from vision/automation
-├── .env.example              Configuration template — copy to .env
-├── requirements.txt          All pinned dependencies
-├── setup.bat                 One-command setup script
-└── pyproject.toml            Build config + `lia` CLI entry point
+assistant/
+├── main.py              boots everything up
+├── config/              settings from .env via pydantic
+├── core/                event bus + shared types
+├── audio/               microphone input + VAD
+├── stt/                 faster-whisper speech to text
+├── tts/                 edge-tts voice output
+├── wakeword/            openwakeword + fallback detection
+├── ai/                  gpt brain + conversation state machine
+├── memory/              sqlite + chromadb for recall
+├── automation/          apps, keyboard, mouse, files, system
+├── browser/             playwright for web stuff
+├── vision/              tesseract + gpt-4o screen reading
+└── gui/                 pyside6 animated orb + chat window
 ```
 
 ---
 
-## Architecture
-
-```
-Microphone ──► VAD ──► WakeWord ──► STT ──► ConversationLoop
-                                                   │
-                                              AI Brain ◄──► Memory
-                                                   │         (SQLite + ChromaDB)
-                                            Dispatcher
-                                           /     |      \
-                                     Automation  Browser  Vision
-                                           \     |      /
-                                              TTS Speaker ──► 🔊
-                                                   │
-                                             GUI (EventBus)
-                                          Animated Orb + Chat Panel
-```
-
-Every module communicates through the **async EventBus** — no module imports another's internals directly.
-
----
-
-## Supported Automation Intents
-
-The AI brain emits these as JSON after its conversational reply (stripped before TTS):
-
-```
-open_app        close_app       kill_process    switch_window
-minimize_window maximize_window list_windows
-type_text       press_key       hotkey
-clipboard_get   clipboard_set
-click           double_click    right_click     move_mouse      drag        scroll
-take_screenshot
-set_volume      mute            set_brightness
-shutdown        restart         sleep           lock
-run_cmd         run_powershell
-create_folder   delete_file     move_file       copy_file       rename_file
-search_files    read_file       zip_files       extract_archive empty_recycle_bin
-open_url        search_google   new_tab         close_tab       go_back     go_forward
-play_youtube    youtube_pause   open_gmail      open_discord
-browser_click   get_page_text
-click_text      read_screen     describe_screen
-```
-
-Dangerous intents (`shutdown`, `restart`, `delete_file`, `run_cmd`, `run_powershell`, etc.)
-always require a *"yes"* confirmation before executing.
-
----
-
-## Supported App Aliases
-
-Say the plain name — Lia resolves it to the correct executable:
-
-`notepad` · `calculator` · `explorer` · `paint` · `word` · `excel` · `powerpoint`  
-`chrome` · `firefox` · `edge` · `vscode` · `discord` · `spotify` · `steam`  
-`cmd` · `powershell` · `terminal` · `obs` · `vlc` · `zoom` · `teams` · `slack`  
-`task manager` · `control panel` · `settings` · `snipping tool`
-
----
-
-## Adding a Plugin
-
-```python
-# assistant/plugins/my_plugin.py
-from assistant.plugins.base import Plugin
-from typing import Any
-
-class SpotifyPlugin(Plugin):
-    name = "spotify"
-    version = "1.0.0"
-    description = "Controls Spotify"
-    handles = ["play_track", "pause_music", "next_track"]
-
-    async def execute(self, intent: str, params: dict[str, Any]) -> dict[str, Any]:
-        if intent == "play_track":
-            track = params.get("track", "")
-            # ... control Spotify via spotipy or subprocess ...
-            return {"response": f"Playing {track} on Spotify."}
-        return {"response": "Done."}
-```
-
-Register it in `main.py` startup:
-
-```python
-from assistant.plugins.my_plugin import SpotifyPlugin
-plugin_manager.register(SpotifyPlugin())
-```
-
----
-
-## Running Tests
+## Running tests
 
 ```bat
 .venv\Scripts\activate
 pytest tests/ -v
 ```
 
-Expected: **55 passed**
+Should get 55 passing.
 
 ---
 
-## Building a Standalone Executable
+## Building an exe
 
 ```bat
-# Generate icon (requires Pillow)
 python installer\create_icon.py
-
-# Build Lia.exe
 installer\build.bat
-# Output: dist\Lia.exe
-
-# Build Windows installer (requires Inno Setup 6)
-# Compile: installer\install.iss → LiaSetup.exe
 ```
+
+Output goes to `dist\Lia.exe`. There's also an Inno Setup script in `installer\` if you want a proper installer.
 
 ---
 
 ## Troubleshooting
 
-**Lia doesn't hear me**
-- Check your default microphone in Windows Sound Settings
-- List devices: `python -c "import sounddevice; print(sounddevice.query_devices())"`
+**Can't hear me** — check Windows Sound Settings, make sure the right mic is default
 
-**Speech recognition is slow**
-- Use `STT_MODEL=tiny.en` for fastest results, or set `STT_DEVICE=cuda` with an NVIDIA GPU
+**Slow transcription** — switch to `STT_MODEL=tiny.en` or use `STT_DEVICE=cuda` if you have an Nvidia GPU
 
-**No voice output**
-- Confirm `edge-tts` installed: `pip install edge-tts`
-- Check your default playback device in Windows Sound Settings
+**No voice** — make sure `edge-tts` is installed and your playback device is set right
 
-**"OpenAI API key not set"**
-- Add `OPENAI_API_KEY=sk-...` to `.env`
-- Lia still responds in stub mode without a key (time, system stats, basic replies)
+**API key error** — add it to `.env`. Stub mode still works without it for basic stuff
 
-**Tesseract not found**
-- Install from https://github.com/UB-Mannheim/tesseract/wiki
-- Update `TESSERACT_PATH` in `.env` to match your install location
+**Tesseract not found** — install it and update `TESSERACT_PATH` in `.env`
 
-**Wake word not triggering**
-- OpenWakeWord models download automatically on first run (~50 MB, requires internet once)
-- Fallback transcript matching works immediately without any download
-- Speak naturally — *"Hey Lia"* with a brief pause
+**Wake word not triggering** — models download on first run (~50 MB), after that should just work. Speak naturally with a small pause after "Hey Lia"
 
 ---
 
 ## Dependencies
 
-| Purpose | Package |
-|---|---|
-| AI / LLM | `openai` |
-| Speech-to-Text | `faster-whisper` |
-| Voice Activity Detection | `silero-vad` (via torch.hub) |
-| Wake Word | `openwakeword` |
-| Text-to-Speech | `edge-tts` |
-| Audio playback | `pygame` |
-| Audio capture | `sounddevice` |
-| Windows automation | `pyautogui` `pynput` `pygetwindow` `psutil` `pywin32` |
-| Volume control | `pycaw` |
-| Brightness control | `screen-brightness-control` |
-| Browser automation | `playwright` |
-| OCR | `pytesseract` |
-| Document reading | `pymupdf` `python-docx` `openpyxl` |
-| Database | `sqlalchemy[asyncio]` `aiosqlite` |
-| Vector memory | `chromadb` `sentence-transformers` |
-| GUI | `PySide6` |
-| Config | `pydantic-settings` |
-| Logging | `loguru` |
+Main ones: `openai`, `faster-whisper`, `edge-tts`, `openwakeword`, `pygame`, `sounddevice`, `pyautogui`, `playwright`, `pytesseract`, `PySide6`, `sqlalchemy`, `chromadb`
 
-Full pinned list: [`requirements.txt`](requirements.txt)
+Full list in `requirements.txt`.
 
 ---
 
 ## License
 
-MIT — free to use, modify, and distribute.
-
----
-
-*Built with Python · OpenAI · faster-whisper · edge-tts · Silero VAD · OpenWakeWord · PySide6 · Playwright · asyncio*
+MIT
